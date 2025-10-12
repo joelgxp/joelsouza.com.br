@@ -46,18 +46,39 @@ Antes de configurar o GitHub Actions, teste a conexão FTP:
 
 ### Troubleshooting
 
-#### Erro "ENOTFOUND"
-- Verifique se o `FTP_HOST` está correto
-- Teste a conectividade: `ping ftp.seudominio.com.br`
-- Certifique-se de que não há espaços extras nos secrets
+#### Erro "ENOTFOUND ***"
+Este erro indica que o DNS não consegue resolver o hostname do servidor FTP.
+
+**Soluções:**
+1. **Verifique se os secrets estão configurados:**
+   - Vá em Settings → Secrets and variables → Actions
+   - Confirme que `FTP_HOST`, `FTP_USER` e `FTP_PASS` existem
+
+2. **Teste a conectividade:**
+   ```bash
+   ping ftp.joelsouza.com.br
+   telnet ftp.joelsouza.com.br 21
+   ```
+
+3. **Verifique o hostname correto:**
+   - No painel da HostGator, vá em "FTP Accounts"
+   - Use o servidor FTP exato mostrado lá
+   - Geralmente é `ftp.seudominio.com.br`
+
+4. **Teste com cliente FTP primeiro:**
+   - Use FileZilla ou similar
+   - Conecte com as mesmas credenciais
+   - Se não conectar, o problema é nas credenciais
 
 #### Erro de Autenticação
 - Verifique se `FTP_USER` e `FTP_PASS` estão corretos
 - Teste as credenciais em um cliente FTP primeiro
+- Certifique-se de que não há espaços extras nos secrets
 
 #### Erro de Permissão
-- Certifique-se de que o usuário FTP tem permissão para escrever na pasta `public_html/`
+- Certifique-se de que o usuário FTP tem permissão para escrever na pasta `joelsouza/`
 - Verifique se a conta FTP está ativa no painel da HostGator
+- Confirme que o diretório de destino existe no servidor
 
 ## 📁 Estrutura do Projeto
 
