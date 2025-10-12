@@ -15,9 +15,9 @@ jobs:
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
+          server: ftp.hotelalphavilleguaxupe.com.br
+          username: joelsouza@joelsouza.com.br
+          password: 96$BRb)La57p
           protocol: ftp
           port: 21
           local-dir: ./
