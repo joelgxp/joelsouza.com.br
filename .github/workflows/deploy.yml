@@ -19,18 +19,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Rsync to server
-        run: |
-          sshpass -p "${{ secrets.SSH_PASS }}" rsync -az --delete \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            --exclude 'node_modules/' \
-            --exclude '.DS_Store' \
-            --exclude 'Thumbs.db' \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes" \
-            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:joelsouza/
-
-      - name: Test connection
+      - name: Git pull on server
         run: |
           sshpass -p "${{ secrets.SSH_PASS }}" ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "echo 'Deploy concluído com sucesso!' && ls -la joelsouza/"
+            "cd joelsouza && git pull origin main && echo 'Deploy concluído com sucesso!' && ls -la"
