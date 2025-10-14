@@ -1,4 +1,4 @@
-name: Deploy to HostGator
+name: Deploy via SSH
 
 on:
   push:
@@ -6,30 +6,31 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
+  ssh-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: hotelalphavilleguaxupe.com.br
-          username: joelsouza@joelsouza.com.br
-          password: 96$BRb)La57p
-          protocol: ftp
-          port: 21
-          local-dir: ./
-          server-dir: joelsouza/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/.DS_Store
-            **/Thumbs.db
-            **/.env
-            **/.env.*
-            **/README.md
-            **/.gitignore
+      - name: Setup SSH with password
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Rsync to server
+        run: |
+          sshpass -p "${{ secrets.SSH_PASS }}" rsync -az --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'node_modules/' \
+            --exclude '.DS_Store' \
+            --exclude 'Thumbs.db' \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=yes" \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:joelsouza/
+
+      - name: Test connection
+        run: |
+          sshpass -p "${{ secrets.SSH_PASS }}" ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "echo 'Deploy concluído com sucesso!' && ls -la joelsouza/"
